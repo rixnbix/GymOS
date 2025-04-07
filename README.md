@@ -4,7 +4,7 @@ A client relationship management webapp that helps facilities manage memberships
 
 ## **1. Application Domain Introduction**
 
-The Gym Membership and Training Management System is designed to assist fitness centers in managing memberships, personal training sessions, and class schedules. This application will provide an efficient way for gym owners, trainers, and members to handle their fitness-related activities. The primary users of this system are gym administrators, personal trainers, and members.
+The Gym Membership and Training Management System is designed to assist fitness centers in managing memberships, personal training sessions, and class schedules. This application will provide an efficient way for gym owners, trainers, and members to handle their fitness-related activities. The primary users of this system are gym administrators and personal trainers.
 
 ### **Relevant Domain Knowledge:**
 
