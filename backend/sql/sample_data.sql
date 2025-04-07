@@ -29,9 +29,3 @@ VALUES ('Evening HIIT', 'Tue/Thu 6:00 PM', 2, 10);
 INSERT INTO Class_Enrollment (MemberID, ClassID)
 VALUES (1, 1); -- Alice in Morning Bootcamp
 
--- Create Admin and Trainer App Users
-INSERT INTO User (Username, PasswordHash, Role)
-VALUES ('admin1', 'pbkdf2:sha256:260000$abcdef$examplehash1', 'admin');
-
-INSERT INTO User (Username, PasswordHash, Role)
-VALUES ('trainer1', 'pbkdf2:sha256:260000$ghijkl$examplehash2', 'trainer');
