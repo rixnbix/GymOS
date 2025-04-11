@@ -33,3 +33,9 @@
 
 #config file
 config.json
+
+# Virtual env
+.venv
+
+#Python
+__pycache__
