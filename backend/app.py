@@ -61,3 +61,4 @@ def create_app():
     app.register_blueprint(search, url_prefix='/search')
 
     return app
+

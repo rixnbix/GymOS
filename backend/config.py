@@ -1,13 +1,7 @@
-import os
 import json
 from models.oracle_dbinterface import *
 
-def get_database(path: str = None) -> Database:
-    if path is None:
-        # Automatically find config.json in the root directory
-        root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(root_dir, "config.json")
-
+def get_database(path: str = "config.json") -> Database:
     try:
         with open(path, "r") as f:
             config = json.load(f)

@@ -1,7 +1,7 @@
 {
-  "username": "your_oracle_username",
-  "password": "your_password",
-  "database": "localhost:1521/orcl",
+  "username": "fernandr",
+  "password": "658677687",
+  "database": "database.csci.viu.ca",
   "pool_min": 4,
   "pool_max": 4,
   "pool_inc": 0

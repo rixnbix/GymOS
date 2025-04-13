@@ -2,13 +2,14 @@ import oracledb
 from .database_interface import *
 from random import randint
 
-# Concrete User class (for Member and Trainer)
+# Concrete User class (for admin)
 class oracle_user(User):
-    def __init__(self, id, name, membership_type=None, password=None):
-        self.id = id
-        self.name = name
-        self.membership_type = membership_type
+    def __init__(self, user_id, email, role, password=None):
+        self.id = user_id
+        self.email = email
+        self.role = role
         self.__password__ = password
+
 
 # Concrete Member class
 class oracle_member(oracle_user):
@@ -52,39 +53,66 @@ class oracle_database(Database):
             increment=pool_inc
         )
 
-    # Get member by ID
-    def get_user(self, user_id: str) -> Union[oracle_member, oracle_trainer, None]:
+    def get_user(self, user_id: str) -> oracle_user:
         with self.pool.acquire() as conn:
             with conn.cursor() as cursor:
-                # Check if it's a member first
-                result = cursor.execute(""" 
-                    SELECT MemberID, Name, MembershipType, ContactInfo, JoinDate
-                    FROM Member
-                    WHERE MemberID = :1
-                """, [user_id]).fetchone()
-                if result:
-                    return oracle_member(*result)
-
-                # Check if it's a trainer if not found as a member
                 result = cursor.execute("""
-                    SELECT TrainerID, Name, Specialization
-                    FROM Trainer
-                    WHERE TrainerID = :1
+                    SELECT UserID, Email, Password, Role
+                    FROM Users
+                    WHERE UserID = :1 AND Role = 'admin'
                 """, [user_id]).fetchone()
                 if result:
-                    return oracle_trainer(*result)
+                    return oracle_user(*result)
         return None
 
-    # Create a new member
-    def create_user(self, user_id: str, name: str, membership_type: str, password: str, contact_info: str) -> oracle_member:
+
+
+   # Create an admin user (signup)
+    def create_user(self, email: str, password: str, role: str) -> Union[oracle_user, None]:
         with self.pool.acquire() as conn:
             with conn.cursor() as cursor:
-                cursor.execute("""
-                    INSERT INTO Member (MemberID, Name, JoinDate, MembershipType, ContactInfo)
-                    VALUES (:1, :2, SYSDATE, :3, :4)
-                """, [user_id, name, membership_type, contact_info])
-                conn.commit()
-                return self.get_user(user_id)
+                try:
+                    print(f"[DEBUG] Creating user with email: {email}, role: {role}")
+
+                    # Check if the email already exists
+                    cursor.execute("""
+                        SELECT COUNT(*) FROM Users WHERE email = :1
+                    """, [email])
+                    email_count = cursor.fetchone()[0]
+
+                    if email_count > 0:
+                        print(f"[ERROR] Email {email} already exists.")
+                        return None  # Return None if email already exists
+
+                    # Get the next available UserID from the sequence
+                    cursor.execute("""
+                        SELECT user_id_seq.NEXTVAL FROM DUAL
+                    """)
+                    user_id = cursor.fetchone()[0]
+                    print(f"[DEBUG] Generated UserID: {user_id}")
+
+                    # Insert the new user into the Users table
+                    cursor.execute("""
+                        INSERT INTO Users (UserID, email, Password, Role)
+                        VALUES (:1, :2, :3, :4)
+                    """, [user_id, email, password, role])
+                    conn.commit()
+
+                    # Fetch the new user by email to get their UserID
+                    cursor.execute("""
+                        SELECT UserID FROM Users WHERE email = :1
+                    """, [email])
+                    user_id = cursor.fetchone()[0]
+
+                    print(f"[DEBUG] User created with ID: {user_id}, email: {email}")
+                    return oracle_user(user_id, email, role, password)
+                except Exception as e:
+                    print(f"[ERROR] Failed to create user: {e}")
+                    return None
+
+
+
+
 
     # Delete member by ID
     def delete_member(self, user_id: str) -> bool:
@@ -199,6 +227,12 @@ class oracle_database(Database):
     def assign_trainer_to_class(self, trainer_id: str, class_id: str):
         with self.pool.acquire() as conn:
             with conn.cursor() as cursor:
+                cursor.execute("""
+                    INSERT INTO Users (UserID, Email, Password, Role)
+                    VALUES (:1, :2, :3, 'admin')
+                """, [user_id, email, password])
+                conn.commit()
+                return self.get_admin(user_id)
                 cursor.execute("""
                     UPDATE Class
                     SET TrainerID = :1

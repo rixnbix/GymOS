@@ -1,0 +1,139 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #eef2f3;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.login-container {
+    background: white;
+    padding: 40px;
+    margin-top: 40px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    width: 300px;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 12px 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.msg {
+    text-align: center;
+    color: red;
+    margin-top: 10px;
+}
+
+.signup-link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.signup-link a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+/* Banner styles */
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.banner .logo {
+    font-size: 36px;
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.banner .logo:hover {
+    color: #0056b3;
+}
+
+/* Content styling */
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.index-container {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 30px;
+}
+
+.index-container h1 {
+    font-size: 40px;
+    color: #333;
+}
+
+.index-container p {
+    font-size: 18px;
+    color: #666;
+    margin-top: 10px;
+}
+
+.index-nav {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.index-nav a {
+    display: inline-block;
+    width: 200px;             
+    padding: 10px 0;           
+    text-align: center;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box; 
+}
+
+.index-nav a:hover {
+    background-color: #0056b3;
+}

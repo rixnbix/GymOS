@@ -11,14 +11,24 @@ def init_auth_routes(database):
 @auth.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        username = request.form.get("username")
+        email = request.form.get("email")
         password = request.form.get("password")
-        if db.create_user(username, password):
+        role = "admin"  # Hardcoded for now, or set based on logic
+
+        print(f"[DEBUG] Signup form received: {email}")
+
+        # Create the user with the received data
+        new_user = db.create_user(email, password, role)
+
+        if new_user:
             flash("Account created successfully. Please log in.")
             return redirect(url_for('auth.login'))
         else:
             flash("Username already exists or invalid input.")
+    
     return render_template("signup.html")
+
+
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():

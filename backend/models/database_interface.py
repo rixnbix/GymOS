@@ -2,26 +2,35 @@ from flask_login import UserMixin
 from typing import Union, List
 from abc import ABC, abstractmethod
 
-# Abstract base class for Users
+# -------------------- User Classes --------------------
+
+# Abstract base class for all users
 class User(ABC, UserMixin):
     id: str
-    name: str
-    membership_type: str  # e.g., Basic, Premium
-    _password: str
+    password: str
 
     def __repr__(self):
-        return f'{self.id} - {self.name}'
+        return f'{self.id}'
+
+# Concrete Admin class
+class Admin(User):
+    email: str
+    role: str  # Always 'admin'
 
 # Concrete Member class
 class Member(User):
+    name: str
+    membership_type: str  # e.g., Basic, Premium
     contact_info: str
     join_date: str  # ISO date format e.g., "2025-04-10"
 
 # Concrete Trainer class
 class Trainer(User):
+    name: str
     specialization: str
 
-# Abstract class for Classes
+# -------------------- Class Entity --------------------
+
 class Class(ABC):
     id: str
     name: str
@@ -32,7 +41,8 @@ class Class(ABC):
     def __repr__(self):
         return f'{self.id} - {self.name}'
 
-# Abstract class for Membership Plans
+# -------------------- Membership Plan Entity --------------------
+
 class MembershipPlan(ABC):
     id: str
     type: str  # e.g., Basic, Premium
@@ -42,7 +52,8 @@ class MembershipPlan(ABC):
     def __repr__(self):
         return f'{self.id} - {self.type}'
 
-# Abstract class for database interaction
+# -------------------- Abstract Database Interface --------------------
+
 class Database(ABC):
 
     # ---------------- User Operations ----------------
@@ -51,11 +62,17 @@ class Database(ABC):
         pass
 
     @abstractmethod
-    def create_member(self, user_id: str, name: str, contact_info: str, membership_type: str, join_date: str, password: str) -> Union[Member, None]:
+    def create_member(self, user_id: str, name: str, contact_info: str,
+                      membership_type: str, join_date: str, password: str) -> Union[Member, None]:
         pass
 
     @abstractmethod
-    def create_trainer(self, user_id: str, name: str, specialization: str, password: str) -> Union[Trainer, None]:
+    def create_trainer(self, user_id: str, name: str,
+                       specialization: str, password: str) -> Union[Trainer, None]:
+        pass
+
+    @abstractmethod
+    def create_user(self, user_id: str, email: str, role: str, password: str) -> Union[Admin, None]:
         pass
 
     @abstractmethod
@@ -66,13 +83,18 @@ class Database(ABC):
     def get_trainer(self, trainer_id: str) -> Union[Trainer, None]:
         pass
 
+    @abstractmethod
+    def get_user(self, user_id: str) -> Union[Admin, None]:
+        pass
+
     # ---------------- Class Operations ----------------
     @abstractmethod
     def get_class(self, class_id: str) -> Union[Class, None]:
         pass
 
     @abstractmethod
-    def create_class(self, name: str, trainer_id: str, schedule: str, max_enrollment: int) -> Union[Class, None]:
+    def create_class(self, name: str, trainer_id: str, schedule: str,
+                     max_enrollment: int) -> Union[Class, None]:
         pass
 
     @abstractmethod

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="login-container">
+        <h2>Login to GymOS</h2>
+        <form action="{{ url_for('auth.login') }}" method="POST">
+            <input type="text" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        {% if error %}
+        <div class="msg">{{ error }}</div>
+        {% endif %}
+        <div class="signup-link">
+            <p>Don't have an account? <a href="{{ url_for('auth.signup') }}">Sign up</a></p>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="index-container">
+        <h1>Welcome to GymOS 🏋️‍♂️</h1>
+        <p>Your fitness facility management system</p>
+    </div>
+
+    <div class="index-nav">
+        <a href="{{ url_for('auth.login') }}">Login</a>
+        <a href="{{ url_for('auth.signup') }}">Sign Up</a>
+        <a href="{{ url_for('admin.manage_members') }}">Manage Members</a>
+        <a href="{{ url_for('admin.manage_trainers') }}">Manage Trainers</a>
+        <a href="{{ url_for('session.training_sessions') }}">Training Sessions</a>
+        <a href="{{ url_for('search.search_route') }}">Search</a>
+        <a href="{{ url_for('trainer.trainer_list') }}">Trainers</a>
+    </div>
+{% endblock %}

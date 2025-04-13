@@ -8,14 +8,14 @@ def init_admin_routes(database):
     global db
     db = database
 
-@admin.route("/admin/members")
+@admin.route("/members")
 @login_required
 def manage_members():
     members = db.get_all_members()
-    return render_template("admin/manage_members.html", members=members)
+    return render_template("manage_members.html", members=members)
 
-@admin.route("/admin/trainers")
+@admin.route("/trainers")
 @login_required
 def manage_trainers():
     trainers = db.get_all_trainers()
-    return render_template("admin/manage_trainers.html", trainers=trainers)
+    return render_template("manage_trainers.html", trainers=trainers)
