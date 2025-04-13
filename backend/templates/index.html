@@ -7,12 +7,17 @@
     </div>
 
     <div class="index-nav">
-        <a href="{{ url_for('auth.login') }}">Login</a>
-        <a href="{{ url_for('auth.signup') }}">Sign Up</a>
-        <a href="{{ url_for('admin.manage_members') }}">Manage Members</a>
-        <a href="{{ url_for('admin.manage_trainers') }}">Manage Trainers</a>
-        <a href="{{ url_for('session.training_sessions') }}">Training Sessions</a>
-        <a href="{{ url_for('search.search_route') }}">Search</a>
-        <a href="{{ url_for('trainer.trainer_list') }}">Trainers</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('admin.manage_members') }}">Manage Members</a>
+            <a href="{{ url_for('admin.manage_trainers') }}">Manage Trainers</a>
+            <a href="{{ url_for('session.training_sessions') }}">Training Sessions</a>
+            <a href="{{ url_for('search.search_route') }}">Search</a>
+            <a href="{{ url_for('trainer.trainer_list') }}">Trainers</a>
+            <a href="{{ url_for('auth.logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('auth.login') }}">Login</a>
+            <a href="{{ url_for('auth.signup') }}">Sign Up</a>
+        {% endif %}
     </div>
 {% endblock %}
+

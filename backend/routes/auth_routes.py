@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, current_user, login_required
 
 auth = Blueprint('auth', __name__)
 db = None  # Will be set via init_auth_routes
@@ -13,11 +13,11 @@ def signup():
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
-        role = "admin"  # Hardcoded for now, or set based on logic
+        role = "admin"  # Hardcoded for now
 
         print(f"[DEBUG] Signup form received: {email}")
 
-        # Create the user with the received data
+        # Create the user with plaintext password
         new_user = db.create_user(email, password, role)
 
         if new_user:
@@ -33,15 +33,21 @@ def signup():
 @auth.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
+        email = request.form.get("email")
         password = request.form.get("password")
-        user = db.get_user(username)
-        if user and user.check_password(password):
+        
+        user = db.get_user(email)
+        print(f"[DEBUG] User retrieved: {user.email}, Password: {user.password}")
+        if user and user.password == password:
             login_user(user)
-            return redirect(url_for('index'))  # Assuming your home is the index page
+            print(f"[DEBUG] Login successful for user: {email}")
+            return redirect(url_for('index'))
         else:
             flash("Invalid username or password.")
+            print("[DEBUG] Login failed.")
+    
     return render_template("login.html")
+
 
 @auth.route("/logout")
 @login_required

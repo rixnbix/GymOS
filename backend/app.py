@@ -1,9 +1,8 @@
-# backend/app.py
-
-from flask import Flask, render_template
-from flask_login import LoginManager
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from config import get_database
 from flask import Blueprint
+import bcrypt
 
 # Import blueprints and their init functions
 from routes.auth_routes import auth, init_auth_routes
@@ -13,7 +12,7 @@ from routes.sessions_routes import session, init_sessions_routes
 from routes.admin_routes import admin, init_admin_routes
 from routes.search_routes import search, init_search_routes
 
-# Flask-Login manager (can be reused across apps)
+# Flask-Login manager
 login_manager = LoginManager()
 
 # Global db variable, initialized later
@@ -23,7 +22,7 @@ def create_app():
     global db
 
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = "h4rD_c0D1nG_a$3crE7_K3Y_15_b4D_pr4cT1C3"
+    app.secret_key = "h4rD_c0D1nG_a$3crE7_K3Y_15_b4D_pr4cT1C3"
 
     # Initialize DB
     try:
@@ -45,11 +44,13 @@ def create_app():
     login_manager.init_app(app)
 
     @login_manager.user_loader
-    def load_user(user_id):
-        return db.get_user(user_id)
+    def load_user(id):
+        return db.get_user_by_id(id)
 
     @app.route("/")
     def index():
+        print("[DEBUG] current_user:", current_user)
+        print("[DEBUG] is_authenticated:", current_user.is_authenticated)
         return render_template("index.html")
 
     # Register blueprints
@@ -61,4 +62,3 @@ def create_app():
     app.register_blueprint(search, url_prefix='/search')
 
     return app
-

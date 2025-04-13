@@ -1,28 +1,52 @@
 import oracledb
 from .database_interface import *
 from random import randint
+from flask_login import UserMixin
+import bcrypt
+
 
 # Concrete User class (for admin)
-class oracle_user(User):
-    def __init__(self, user_id, email, role, password=None):
-        self.id = user_id
+class oracle_user(UserMixin):
+    def __init__(self, id, email, role, password):
+        self.id = id
         self.email = email
+        self.password = password
         self.role = role
-        self.__password__ = password
+
+
+    def get_id(self):
+        return str(self.id)
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
 
 
 # Concrete Member class
-class oracle_member(oracle_user):
+class oracle_member:
     def __init__(self, id, name, join_date, membership_type, contact_info):
-        super().__init__(id, name, membership_type)
+        self.id = id
+        self.name = name
         self.join_date = join_date
+        self.membership_type = membership_type
         self.contact_info = contact_info
 
+
 # Concrete Trainer class
-class oracle_trainer(oracle_user):
+class oracle_trainer:
     def __init__(self, id, name, specialization):
-        super().__init__(id, name)
+        self.id = id
+        self.name = name
         self.specialization = specialization
+
 
 # Concrete Class class
 class oracle_class(Class):
@@ -53,17 +77,33 @@ class oracle_database(Database):
             increment=pool_inc
         )
 
-    def get_user(self, user_id: str) -> oracle_user:
+    def get_user(self, email: str) -> oracle_user:
         with self.pool.acquire() as conn:
             with conn.cursor() as cursor:
                 result = cursor.execute("""
                     SELECT UserID, Email, Password, Role
                     FROM Users
-                    WHERE UserID = :1 AND Role = 'admin'
-                """, [user_id]).fetchone()
+                    WHERE Email = :1 AND Role = 'admin'
+                """, [email]).fetchone()
                 if result:
-                    return oracle_user(*result)
+                    user = oracle_user(result[0], result[1], result[3], result[2])
+                    print(f"[DEBUG] Retrieved user: {user}")
+                    return user
         return None
+    
+    def get_user_by_id(self, user_id: str) -> Union[oracle_user, None]:
+        with self.pool.acquire() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute("""
+                    SELECT UserID, Email, Role, Password
+                    FROM Users
+                    WHERE UserID = :1
+                """, [user_id])
+                row = cursor.fetchone()
+                if row:
+                    return oracle_user(row[0], row[1], row[3], row[2])
+                return None
+
 
 
 
@@ -98,21 +138,11 @@ class oracle_database(Database):
                     """, [user_id, email, password, role])
                     conn.commit()
 
-                    # Fetch the new user by email to get their UserID
-                    cursor.execute("""
-                        SELECT UserID FROM Users WHERE email = :1
-                    """, [email])
-                    user_id = cursor.fetchone()[0]
-
                     print(f"[DEBUG] User created with ID: {user_id}, email: {email}")
                     return oracle_user(user_id, email, role, password)
                 except Exception as e:
                     print(f"[ERROR] Failed to create user: {e}")
                     return None
-
-
-
-
 
     # Delete member by ID
     def delete_member(self, user_id: str) -> bool:
@@ -221,24 +251,18 @@ class oracle_database(Database):
                     return oracle_membership_plan(*result)
         return None
 
-    # Missing methods
-
     # Assign trainer to a class
-    def assign_trainer_to_class(self, trainer_id: str, class_id: str):
+    def assign_trainer_to_class(self, trainer_id: str, class_id: str) -> bool:
         with self.pool.acquire() as conn:
             with conn.cursor() as cursor:
-                cursor.execute("""
-                    INSERT INTO Users (UserID, Email, Password, Role)
-                    VALUES (:1, :2, :3, 'admin')
-                """, [user_id, email, password])
-                conn.commit()
-                return self.get_admin(user_id)
                 cursor.execute("""
                     UPDATE Class
                     SET TrainerID = :1
                     WHERE ClassID = :2
                 """, [trainer_id, class_id])
-                conn.commit()
+                conn.commit()   
+                return cursor.rowcount == 1
+
 
     # Get trainer by ID
     def get_trainer(self, trainer_id: str) -> oracle_trainer:
@@ -292,3 +316,59 @@ class oracle_database(Database):
                 """, [member_id, name, membership_type, contact_info])
                 conn.commit()
                 return self.get_member(member_id)
+
+    # Implementing the method to get all members
+    def get_all_members(self):
+        query = """
+        SELECT MemberID, Name, ContactInfo, MembershipType, JoinDate FROM Member
+        """
+        with self.pool.acquire() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query)
+                members = []
+                for row in cursor:
+                    members.append({
+                        'id': row[0],
+                        'name': row[1],
+                        'contact_info': row[2],
+                        'membership_type': row[3],
+                        'join_date': row[4]
+                    })
+                return members
+
+    # Implementing the method to get all trainers
+    def get_all_trainers(self):
+        query = """
+        SELECT TrainerID, Name, Specialization FROM Trainer
+        """
+        with self.pool.acquire() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query)
+                trainers = []
+                for row in cursor:
+                    trainers.append({
+                        'id': row[0],
+                        'name': row[1],
+                        'specialization': row[2]
+                    })
+                return trainers
+            
+    def add_member(self, name, contact_info, membership_type, join_date):
+        query = """
+            INSERT INTO Member (MemberID, Name, ContactInfo, MembershipType, JoinDate)
+            VALUES (LPAD(user_id_seq.NEXTVAL, 9, '0'), :1, :2, :3, :4)
+        """
+        with self.pool.acquire() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (name, contact_info, membership_type, join_date))
+            conn.commit()
+
+    def add_trainer(self, name, specialization):
+        query = """
+            INSERT INTO Trainer (TrainerID, Name, Specialization)
+            VALUES (LPAD(user_id_seq.NEXTVAL, 9, '0'), :1, :2)
+        """
+        with self.pool.acquire() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query, (name, specialization))
+            conn.commit()

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mt-4">Manage Trainers</h1>
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="alert alert-{{ messages[0][0] }} mt-3">
+            {{ messages[0][1] }}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<!-- Add Trainer Form -->
+<div class="mb-4">
+    <h3>Add New Trainer</h3>
+    <form method="POST" action="{{ url_for('admin.manage_trainers') }}">
+        <div class="form-group">
+            <label for="trainer_name">Name</label>
+            <input type="text" class="form-control" id="trainer_name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="trainer_specialty">Specialty</label>
+            <input type="text" class="form-control" id="trainer_specialty" name="specialization" required>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Add Trainer</button>
+    </form>
+</div>
+
+<!-- Trainers Table -->
+<h3>Existing Trainers</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Specialty</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for trainer in trainers %}
+        <tr>
+            <th scope="row">{{ loop.index }}</th>
+            <td>{{ trainer.name }}</td>
+            <td>{{ trainer.specialization }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('admin.delete_trainer', trainer_id=trainer.id) }}" class="no-style-form">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

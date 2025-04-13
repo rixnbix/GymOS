@@ -63,7 +63,7 @@ button:hover {
 
 /* Banner styles */
 header {
-    background-color: #007bff;
+    background-color: #000000;
     color: white;
     padding: 15px 0;
     text-align: center;
@@ -73,12 +73,10 @@ header {
     width: 100%;
 }
 
-.banner .logo {
-    font-size: 36px;
-    color: rgb(255, 255, 255);
-    text-decoration: none;
-    font-weight: bold;
-    letter-spacing: 2px;
+#logo {
+    width: 100px;        /* Adjust width to fit your layout */
+    height: auto;        /* Maintain aspect ratio */
+    margin-right: 20px;
 }
 
 .banner .logo:hover {
@@ -136,4 +134,105 @@ header {
 
 .index-nav a:hover {
     background-color: #0056b3;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;  /* Adds space between the fields */
+}
+
+/* Style for 'Join Date' and 'Membership Type' fields */
+#join_date, #membership_type {
+    padding: 0.5rem;  /* Adds padding inside the input fields */
+    font-size: 1rem;  /* Sets font size for better readability */
+    border: 1px solid #ced4da;  /* Light border around the fields */
+    border-radius: 0.25rem;  /* Rounded corners */
+    width: 100%;  /* Make the input fields stretch the full width */
+    background-color: #f8f9fa;  /* Light background color for the input fields */
+}
+
+/* Focus effect for 'Join Date' and 'Membership Type' fields */
+#join_date:focus, #membership_type:focus {
+    border-color: #80bdff;  /* Change border color on focus */
+    outline: none;  /* Remove the default outline */
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);  /* Add a light shadow around the field */
+}
+
+/* Style for the labels */
+label {
+    font-weight: bold;  /* Make labels bold for better visibility */
+    font-size: 1rem;  /* Adjust label font size */
+    margin-bottom: 0.5rem;  /* Add space below labels */
+}
+
+/* Add some space around the form */
+form {
+    padding: 1rem;
+    background-color: #ffffff;  /* Set background to white for the form */
+    border-radius: 0.5rem;  /* Round the corners of the form */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* Add a subtle shadow to the form */
+}
+
+.no-style-form {
+    all: unset;  /* Reset button styles */
+    background: none;  /* Remove background */
+    border: none;  /* Remove border */
+    padding: 0;  /* Remove padding */
+}
+
+/* Table Styles */
+table {
+    width: 80%;
+    border-collapse: collapse;  /* Ensures borders between table cells merge */
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+table th, table td {
+    padding: 12px 15px;  /* Add padding for more spacing */
+    text-align: left;
+    border: 1px solid #ddd;  /* Light border around cells */
+}
+
+table th {
+    background-color: #f2f2f2;  /* Light grey background for table headers */
+    font-weight: bold;
+}
+
+table tr:nth-child(even) {
+    background-color: #f9f9f9;  /* Zebra striping for even rows */
+}
+
+table tr:hover {
+    background-color: #f1f1f1;  /* Hover effect to highlight rows */
+}
+
+table td {
+    font-size: 14px;
+}
+
+/* Form Button Style (Delete) */
+.no-style-form button {
+    all: unset;  /* Reset button styles */
+    background: #d9534f;  /* Red background for delete button */
+    color: white;  /* White text */
+    border-radius: 5px;  /* Slight rounded corners */
+    padding: 8px 12px;  /* Adequate padding */
+    cursor: pointer;  /* Show pointer on hover */
+    transition: background-color 0.3s ease;  /* Smooth transition for background */
+}
+
+.no-style-form button:hover {
+    background-color: #c9302c;  /* Darker red on hover */
+}
+
+.no-style-form button:active {
+    background-color: #ac2925;  /* Even darker red on click */
+}
+
+/* Optional: Table Caption (Add title above the table) */
+table caption {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
 }

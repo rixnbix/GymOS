@@ -5,17 +5,14 @@ from abc import ABC, abstractmethod
 # -------------------- User Classes --------------------
 
 # Abstract base class for all users
-class User(ABC, UserMixin):
+class User(UserMixin):
     id: str
+    email: str
     password: str
+    role: str  # Always 'admin'
 
     def __repr__(self):
         return f'{self.id}'
-
-# Concrete Admin class
-class Admin(User):
-    email: str
-    role: str  # Always 'admin'
 
 # Concrete Member class
 class Member(User):
@@ -58,9 +55,13 @@ class Database(ABC):
 
     # ---------------- User Operations ----------------
     @abstractmethod
-    def get_user(self, user_id: str) -> Union[User, None]:
+    def get_user(self, email: str) -> Union[User, None]:
         pass
-
+    
+    @abstractmethod
+    def get_user_by_id(self, id: str) -> Union[User, None]:
+        pass
+    
     @abstractmethod
     def create_member(self, user_id: str, name: str, contact_info: str,
                       membership_type: str, join_date: str, password: str) -> Union[Member, None]:
@@ -72,7 +73,7 @@ class Database(ABC):
         pass
 
     @abstractmethod
-    def create_user(self, user_id: str, email: str, role: str, password: str) -> Union[Admin, None]:
+    def create_user(self, user_id: str, email: str, role: str, password: str) -> Union[User, None]:
         pass
 
     @abstractmethod
@@ -83,11 +84,6 @@ class Database(ABC):
     def get_trainer(self, trainer_id: str) -> Union[Trainer, None]:
         pass
 
-    @abstractmethod
-    def get_user(self, user_id: str) -> Union[Admin, None]:
-        pass
-
-    # ---------------- Class Operations ----------------
     @abstractmethod
     def get_class(self, class_id: str) -> Union[Class, None]:
         pass
@@ -101,7 +97,6 @@ class Database(ABC):
     def assign_trainer_to_class(self, trainer_id: str, class_id: str) -> bool:
         pass
 
-    # ---------------- Enrollment Operations ----------------
     @abstractmethod
     def enroll_member_in_class(self, member_id: str, class_id: str) -> bool:
         pass
@@ -114,11 +109,26 @@ class Database(ABC):
     def is_class_full(self, class_id: str) -> bool:
         pass
 
-    # ---------------- Membership Plan Operations ----------------
     @abstractmethod
     def get_membership_plan(self, plan_id: str) -> Union[MembershipPlan, None]:
         pass
 
     @abstractmethod
     def create_membership_plan(self, type: str, duration: int, cost: float) -> Union[MembershipPlan, None]:
+        pass
+
+    @abstractmethod
+    def get_all_members(self):
+        pass
+
+    @abstractmethod
+    def get_all_trainers(self):
+        pass
+    
+    @abstractmethod
+    def add_member(self, name, contact_info, membership_type, join_date):
+        pass
+
+    @abstractmethod
+    def add_trainer(self, name, specialization):
         pass

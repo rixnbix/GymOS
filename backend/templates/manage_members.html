@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mt-4">Manage Members</h1>
+
+<!-- Add Member Form -->
+<div class="mb-4">
+    <h3>Add New Member</h3>
+    <form method="POST" action="{{ url_for('admin.manage_members') }}">
+        <div class="form-group">
+            <label for="member_name">Name</label>
+            <input type="text" class="form-control" id="member_name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="contact_info">Contact Info</label>
+            <input type="text" class="form-control" id="contact_info" name="contact_info" required>
+        </div>
+        <div class="form-group">
+            <label for="membership_type">Membership Type</label>
+            <select class="form-control" id="membership_type" name="membership_type" required>
+                <option value="Basic">Basic</option>
+                <option value="Premium">Premium</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="join_date">Join Date</label>
+            <input type="date" class="form-control" id="join_date" name="join_date" required>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Add Member</button>
+    </form>
+</div>
+
+<!-- Members Table -->
+<h3>Existing Members</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Contact</th>
+            <th scope="col">Membership</th>
+            <th scope="col">Join Date</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for member in members %}
+        <tr>
+            <th scope="row">{{ loop.index }}</th>
+            <td>{{ member.name }}</td>
+            <td>{{ member.contact_info }}</td>
+            <td>{{ member.membership_type }}</td>
+            <td>{{ member.join_date }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('admin.delete_member', member_id=member.id) }}" class="no-style-form">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>                
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
