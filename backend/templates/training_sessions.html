@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mt-4">Training Sessions</h1>
+
+<a href="{{ url_for('session.new_training_session') }}" class="btn btn-success mb-3">Add New Session</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Session Date</th>
+            <th scope="col">Class Name</th>
+            <th scope="col">Trainer</th>
+            <th scope="col">Enrolled Members</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for session in sessions %}
+        <tr>
+            <td>{{ session.session_date }}</td>
+            <td>{{ session.class_name }}</td>
+            <td>{{ session.trainer_name }}</td>
+            <td>
+                <ul class="list-group mb-3">
+                    {% for member in session.members %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ member.name }}
+                        <form method="POST" action="{{ url_for('session.remove_member_from_session', session_id=session.id, member_id=member.id) }}" style="display:inline;">
+                            <button class="btn btn-danger btn-sm">Remove</button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item">No members enrolled.</li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td>
+                {% if eligible_members %}
+                <form method="POST" action="{{ url_for('session.enroll_member', session_id=session.id) }}">
+                    <div class="form-group">
+                        <label for="member_id">Enroll Premium Member</label>
+                        <select name="member_id" class="form-control" required>
+                            {% for member in eligible_members %}
+                                <option value="{{ member.id }}">{{ member.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn btn-primary mt-2">Enroll</button>
+                </form>
+            {% else %}
+                <p>No premium members available for enrollment.</p>
+            {% endif %}
+            
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5" class="text-center">No training sessions found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

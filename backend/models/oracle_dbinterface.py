@@ -191,16 +191,33 @@ class oracle_database(Database):
         return None
 
     # Create a new class
-    def create_class(self, name: str, trainer_id: str, schedule: str, max_enrollment: int) -> oracle_class:
+    def create_class(self, user_id, trainer_id, session_date):
         with self.pool.acquire() as conn:
             with conn.cursor() as cursor:
-                class_id = randint(10000, 99999)  # Random class ID for simplicity
-                cursor.execute("""
-                    INSERT INTO Class (ClassID, Name, TrainerID, Schedule, MaxEnrollment)
-                    VALUES (:1, :2, :3, :4, :5)
-                """, [class_id, name, trainer_id, schedule, max_enrollment])
-                conn.commit()
-                return self.get_class(class_id)
+                try:
+                    print(f"[DEBUG] Creating class with trainer_id: {trainer_id} and session_date: {session_date}")
+
+                    # Get the next available ClassID from the sequence
+                    cursor.execute("""
+                        SELECT user_id_seq.NEXTVAL FROM DUAL
+                    """)
+                    class_id = cursor.fetchone()[0]
+                    print(f"[DEBUG] Generated ClassID: {class_id}")
+
+                    # Insert the new class into the Class table
+                    cursor.execute("""
+                        INSERT INTO Class (ClassID, Name, Schedule, TrainerID)
+                        VALUES (:1, :2, :3, :4)
+                    """, [class_id, f"Session with {trainer_id}", session_date, trainer_id])
+
+                    conn.commit()
+
+                    print(f"[DEBUG] Class created with ID: {class_id}, trainer_id: {trainer_id}")
+                except Exception as e:
+                    print(f"[ERROR] Failed to create class: {e}")
+                    raise
+
+
 
     # Enroll member in a class
     def enroll_member_in_class(self, user_id: str, class_id: str) -> bool:
@@ -372,3 +389,54 @@ class oracle_database(Database):
             with conn.cursor() as cursor:
                 cursor.execute(query, (name, specialization))
             conn.commit()
+
+    def get_training_sessions(self):
+        query = """
+            SELECT c.ClassID, c.Name, c.Schedule, t.Name AS TrainerName
+            FROM Class c
+            JOIN Trainer t ON c.TrainerID = t.TrainerID
+        """
+        with self.pool.acquire() as conn:
+            with conn.cursor() as cursor:
+                try:
+                    cursor.execute(query)
+                    rows = cursor.fetchall()
+
+                    if not rows:
+                        print("[DEBUG] No training sessions found.")
+                    else:
+                        print(f"[DEBUG] Found {len(rows)} training sessions.")
+
+                    sessions = []
+                    for row in rows:
+                        print(f"[DEBUG] Row: {row}")
+                        session = {
+                            'id': row[0],
+                            'name': row[1],
+                            'schedule': row[2],
+                            'trainer_name': row[3],
+                        }
+                        sessions.append(session)
+
+                    return sessions
+                except Exception as e:
+                    print(f"[ERROR] Failed to fetch training sessions: {e}")
+                    return []
+
+
+    def get_eligible_members(self):
+        query = """
+            SELECT MemberID, Name
+            FROM Member
+            WHERE MembershipType = 'Premium'
+        """
+        with self.pool.acquire() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query)
+                eligible_members = []
+                for row in cursor:
+                    eligible_members.append({
+                        'id': row[0],
+                        'name': row[1]
+                    })
+                return eligible_members

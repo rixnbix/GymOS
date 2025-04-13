@@ -236,3 +236,24 @@ table caption {
     margin-bottom: 10px;
     color: #333;
 }
+
+.back-btn {
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+    width: 2%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
+.back-btn:hover {
+    background-color: #343a40;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

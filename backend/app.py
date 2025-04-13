@@ -56,9 +56,9 @@ def create_app():
     # Register blueprints
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(member, url_prefix='/members')
-    app.register_blueprint(trainer, url_prefix='/trainers')
+    app.register_blueprint(trainer, url_prefix='/trainers') # implemented through auth so not needed anymore
     app.register_blueprint(session, url_prefix='/sessions')
     app.register_blueprint(admin, url_prefix='/admin')
-    app.register_blueprint(search, url_prefix='/search')
+    app.register_blueprint(search, url_prefix='/search') # Not implemented yet
 
     return app

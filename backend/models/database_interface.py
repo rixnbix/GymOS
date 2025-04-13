@@ -132,3 +132,11 @@ class Database(ABC):
     @abstractmethod
     def add_trainer(self, name, specialization):
         pass
+
+    @abstractmethod
+    def get_training_sessions(self):
+        pass
+    
+    @abstractmethod
+    def get_eligible_members(self):
+        pass
