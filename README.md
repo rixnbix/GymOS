@@ -1,6 +1,8 @@
 # GymOS
 
 A client relationship management webapp that helps facilities manage memberships and training sessions.
+![Logo](./logo.png)
+
 
 ## **1. Application Domain Introduction**
 
