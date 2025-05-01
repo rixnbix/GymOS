@@ -66,45 +66,49 @@ The system will include the following core functionalities:
 ### **1. Entity-Relationship Diagram**
 
 ```mermaid
+---
+title: Gym Membership Management
+---
 erDiagram
-    MEMBER {
-        int MemberID PK
-        string Name
-        string ContactInfo
-        string MembershipType
-        date JoinDate
+  MEMBER {
+        int member_id PK
+        string name
+        string contact_info
+        string membership_type
+        date join_date
     }
 
-    TRAINER {
-        int TrainerID PK
-        string Name
-        string Specialization
+  CLASSES {
+        int class_id PK
+        string name
+        int trainer_id FK
+        string schedule
+        int max_enrollment
     }
 
-    CLASS {
-        int ClassID PK
-        string Name
-        int TrainerID FK
-        string Schedule
-        int MaxEnrollment
+  TRAINER {
+        int trainer_id PK
+        string name
+        string specialization
     }
 
-    MEMBERSHIP_PLAN {
-        int PlanID PK
-        string Type
-        int Duration
-        decimal Cost
+  MEMBERSHIP_PLAN {
+        int plan_id PK
+        string type
+        int duration
+        float cost
     }
 
-    CLASS_ENROLLMENT {
-        int EnrollmentID PK
-        int MemberID FK
-        int ClassID FK
+  CLASS_ENROLLMENT {
+        int enrollment_id PK
+        int member_id FK
+        int class_id FK
     }
 
-    MEMBER ||--|{ MEMBERSHIP_PLAN : subscribes_to
-    TRAINER ||--|{ CLASS : conducts
-    MEMBER ||--|{ CLASS_ENROLLMENT : enrolls
-    CLASS ||--|{ CLASS_ENROLLMENT : contains
+  MEMBER ||--|{ MEMBERSHIP_PLAN : subscribes_to
+  TRAINER ||--|{ CLASSES : conducts
+  MEMBER ||--|{ CLASS_ENROLLMENT : enrolls
+  CLASSES ||--|{ CLASS_ENROLLMENT : includes
+
 
 ```
